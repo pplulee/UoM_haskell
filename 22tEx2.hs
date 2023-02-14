@@ -32,32 +32,34 @@ str2a_r = (str2a_o == (blur str2a_i))
 
 -- 10 cells
 
-str3_i = let
+str3b_i = let
   c = clockwise
   w = allWhite
   b = allBlack in
-   (c(w 2)(w 2)(c(b 1)(w 1)(w 1)(b 1))(c(b 1)(w 1)(w 1)(b 1)))
-str3_o = let
+   (c(w 2)(w 2)(c(b 1)(b 1)(w 1)(w 1))(c(b 1)(b 1)(w 1)(w 1)))
+str3b_o = let
   c = clockwise
   w = allWhite
   b = allBlack in
-   (c(w 2)(w 2)(c(w 1)(w 1)(w 1)(w 1))(c(w 1)(w 1)(b 1)(b 1)))
-str3_r = (str3_o == (blur str3_i))
+   (c(b 2)(b 2)(c(b 1)(w 1)(w 1)(w 1))(c(w 1)(b 1)(w 1)(w 1)))
+str3b_r = (str3b_o == (blur str3b_i))
+
 
 
 -- 16 cells
 
-str4_i = let
+str4b_i = let
   c = clockwise
   w = allWhite
   b = allBlack in
-   (c(c(b 1)(w 1)(w 1)(b 1))(c(b 1)(w 1)(w 1)(b 1))(c(b 1)(w 1)(w 1)(b 1))(c(b 1)(w 1)(w 1)(b 1)))
-str4_o = let
+   (c(c(b 1)(b 1)(w 1)(w 1))(c(b 1)(b 1)(w 1)(w 1))(c(b 1)(b 1)(w 1)(w 1))(c(b 1)(b 1)(w 1)(w 1)))
+str4b_o = let
   c = clockwise
   w = allWhite
   b = allBlack in
-   (c(c(b 1)(b 1)(w 1)(b 1))(c(w 1)(w 1)(w 1)(b 1))(c(b 1)(w 1)(w 1)(w 1))(c(b 1)(w 1)(b 1)(b 1)))
-str4_r = (str4_o == (blur str4_i))
+   (c(c(b 1)(b 1)(w 1)(b 1))(c(b 1)(b 1)(b 1)(w 1))(c(b 1)(w 1)(w 1)(w 1))(c(w 1)(b 1)(w 1)(w 1)))
+str4b_r = (str4b_o == (blur str4b_i))
+
 
 --- large
 
@@ -109,8 +111,8 @@ mid_r = (mid_o == (blur mid_i))
 main =     mainS
         >> putStrLn(if single_r  then "Joe: Single cell check for ex2 passed!" else "ERROR: Single cell check for ex2 FAILED!")
         >> putStrLn(if str2a_r then "Joe: 4 cell striped check for ex2 passed!" else "ERROR: 4 cell striped check for ex2 FAILED!")
-        >> putStrLn(if str3_r then "Joe: 10 cell striped  check for ex2 passed!" else "ERROR: 10 cell striped check for ex2 FAILED!")
-        >> putStrLn(if str4_r then "Joe: 16 cell striped check for ex2 passed!" else "ERROR: 16 cell striped check for ex2 FAILED!")
+        >> putStrLn(if str3b_r then "Joe: (fixed) 10 cell striped  check for ex2 passed!" else "ERROR: 10 cell striped check for ex2 FAILED!")
+        >> putStrLn(if str4b_r then "Joe: (fixed) 16 cell striped check for ex2 passed!" else "ERROR: 16 cell striped check for ex2 FAILED!")
         >> putStrLn(if str_mid_r then "Joe: big striped check for ex2 passed!" else "ERROR: big striped check for ex2 FAILED!")
         >> putStrLn(if str2b_r then "Joe: 4 cell not striped check for ex2 passed!" else "ERROR: 4 cell not striped check for ex2 FAILED!")
         >> putStrLn(if mid_r then "Joe: medium size not striped check for ex2 passed!" else "ERROR: medium size not striped check for ex2 FAILED!")
