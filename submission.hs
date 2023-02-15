@@ -18,17 +18,23 @@ anticlockwise a b c d = Node a d b c
 
 -- exercise 2
 
--- definition of direction
+-- definition of structure
+-- input: a b c d
 -- a b
 -- c d
+-- clockwise:
+-- a b
+-- d c
+-- anticlockwise:
+-- a d
+-- b c
 
 -- More than half of neighbours are the different colour
 needReverse :: Colour -> [Colour] -> Bool
 needReverse x [] = False
 -- need to change colour if more than half of neighbours are the different colour
-needReverse Black xs = (length (filter (==Black) xs)) < (length (filter (/=Black) xs))
-needReverse White xs = (length (filter (==White) xs)) < (length (filter (/=White) xs))
---needReverse x xs = (length (filter (/=x) xs)) > ((length(xs)) `div` 2) -- may cause problem with div
+needReverse x xs = (length (filter (==x) xs)) < (length (filter (/=x) xs))
+-- needReverse x xs = (length (filter (/=x) xs)) > ((length(xs)) `div` 2) -- may cause problem with div
 
 
 data Neighbour = Empty | QuadtreeN Quadtree deriving (Eq, Show)
@@ -87,7 +93,7 @@ getD (QuadtreeN (Node a b c d)) = QuadtreeN d
 
 -- Function to update neighbours(not same level)
 updateNeighbour :: TreeList -> Neighbours -> TreeList
-updateNeighbour (LeafL a l) obj = LeafL a (getDown (up obj) ++ getUp (down obj) ++ getRight (left obj) ++ getLeft (right obj))
+updateNeighbour (LeafL a l) obj = LeafL a (l ++ getDown (up obj) ++ getUp (down obj) ++ getRight (left obj) ++ getLeft (right obj))
 updateNeighbour (NodeL a b c d) obj = NodeL
   (updateNeighbour a (Neighbours{up = getC (up obj),down = Empty,left = getB (left obj),right = Empty}))
   (updateNeighbour b (Neighbours{up = getD (up obj),down = Empty,left = Empty,right = getA (right obj)}))
