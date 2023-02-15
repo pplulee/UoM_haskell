@@ -16,9 +16,9 @@ anticlockwise :: Quadtree -> Quadtree -> Quadtree -> Quadtree -> Quadtree
 -- Put four inputs to form a anticlockwise order
 anticlockwise a b c d = Node a d b c
 
-
 -- exercise 2
 
+-- definition of direction
 -- a b
 -- c d
 
@@ -26,15 +26,22 @@ anticlockwise a b c d = Node a d b c
 needReverse :: Colour -> [Colour] -> Bool
 needReverse x [] = False
 -- need to change colour if more than half of neighbours are the different colour
-needReverse x xs = (length (filter (/=x) xs)) > ((length(xs)) `div` 2)
+needReverse Black xs = (length (filter (==Black) xs)) < (length (filter (/=Black) xs))
+needReverse White xs = (length (filter (==White) xs)) < (length (filter (/=White) xs))
+--needReverse x xs = (length (filter (/=x) xs)) > ((length(xs)) `div` 2) -- may cause problem with div
 
---striped :: Quadtree -> Bool
---striped (Leaf a) = True
---striped (Node a b c d) = a==b && c==d && striped a && striped c
 
 data Neighbour = Empty | QuadtreeN Quadtree deriving (Eq, Show)
+
+-- data structure to store neighbours
 data Neighbours = Neighbours {up::Neighbour, down::Neighbour, left::Neighbour, right::Neighbour} deriving (Eq, Show)
+
+-- data structure to store all colours of neighbours
 data TreeList = LeafL Colour [Colour] | NodeL TreeList TreeList TreeList TreeList deriving (Eq, Show)
+
+reverseColour :: Colour -> Quadtree
+reverseColour Black = Leaf White
+reverseColour White = Leaf Black
 
 -- Functions to get one side of a quadtree, put leaves into a list
 getUp :: Neighbour -> [Colour]
@@ -78,7 +85,7 @@ getD Empty = Empty
 getD (QuadtreeN (Leaf a)) = QuadtreeN (Leaf a)
 getD (QuadtreeN (Node a b c d)) = QuadtreeN d
 
-
+-- Function to update neighbours(not same level)
 updateNeighbour :: TreeList -> Neighbours -> TreeList
 updateNeighbour (LeafL a l) obj = LeafL a (getDown (up obj) ++ getUp (down obj) ++ getRight (left obj) ++ getLeft (right obj))
 updateNeighbour (NodeL a b c d) obj = NodeL
@@ -87,6 +94,7 @@ updateNeighbour (NodeL a b c d) obj = NodeL
   (updateNeighbour c (Neighbours{up = Empty,down = getA (down obj),left = getD (left obj),right = Empty}))
   (updateNeighbour d (Neighbours{up = Empty,down = getB (down obj),left = Empty,right = getC (right obj)}))
 
+-- Function to update neighbours(same level)
 computeNeighbours :: Quadtree -> TreeList
 computeNeighbours (Leaf a) = LeafL a []
 computeNeighbours (Node a b c d) = NodeL
@@ -95,16 +103,10 @@ computeNeighbours (Node a b c d) = NodeL
   (updateNeighbour (computeNeighbours c) (Neighbours {up = QuadtreeN a, down = Empty, left = Empty, right = QuadtreeN d}))
   (updateNeighbour (computeNeighbours d) (Neighbours {up = QuadtreeN b, down = Empty, left = QuadtreeN c, right = Empty}))
 
-detectEdges :: TreeList -> Quadtree
-detectEdges (LeafL a l) = if needReverse a l then (if a==Black then Leaf White else Leaf Black) else Leaf a
-detectEdges (NodeL a b c d) = Node (detectEdges a) (detectEdges b) (detectEdges c) (detectEdges d)
+compute :: TreeList -> Quadtree
+compute (LeafL a l) = if needReverse a l then (reverseColour a) else Leaf a
+compute (NodeL a b c d) = Node (compute a) (compute b) (compute c) (compute d)
 
 blur :: Quadtree -> Quadtree
 blur (Leaf a) = Leaf a
-blur (Node a b c d) = detectEdges (computeNeighbours (Node a b c d))
-
---str3b_i = let
---  c = clockwise
---  w = allWhite
---  b = allBlack in
---   (c(w 2)(w 2)(c(b 1)(b 1)(w 1)(w 1))(c(b 1)(b 1)(w 1)(w 1)))
+blur (Node a b c d) = compute (computeNeighbours (Node a b c d))
